@@ -50,13 +50,25 @@ void QSort(int arr[], int start, int end)
         if(low < high){
             mid = partition(arr, low, high);
 
-            if(low < mid){
-                stk.push(low);
-                stk.push(mid - 1);
+            if(mid - low > high - mid){ // ps: 压入子文件中的较大者 确保栈的最大深度为lgN(2为底)
+                if(low < mid){
+                    stk.push(low);
+                    stk.push(mid - 1);
+                }
+                if(mid < high){
+                    stk.push(mid + 1);
+                    stk.push(high);
+                }
             }
-            if(mid < high){
-                stk.push(mid + 1);
-                stk.push(high);
+            else{
+                if(mid < high){
+                    stk.push(mid + 1);
+                    stk.push(high);
+                }
+                if(low < mid){
+                    stk.push(low);
+                    stk.push(mid - 1);
+                }
             }
         }
     }
