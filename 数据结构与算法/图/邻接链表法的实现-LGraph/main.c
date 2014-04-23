@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include "LGraph.h"
 
-/* run this program using the console pauser or add your own getch, system("pause") or input loop */
-
 void print_data(LVertex* v)
 {
     printf("%s", (char*)v);
