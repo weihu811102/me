@@ -168,18 +168,13 @@ int MGraph_EdgeCount(MGraph* graph) // O(n*n)
 
 static void recursive_dfs(TMGraph* graph, int v, int visited[], MGraph_Printf* pFunc)
 {
-    int i = 0;
-    
-    pFunc(graph->v[v]);
-    
-    visited[v] = 1;
-    
+    int i = 0;    
+    pFunc(graph->v[v]);    
+    visited[v] = 1;    
     printf(", ");
     
-    for(i=0; i<graph->count; i++)
-    {
-        if( (graph->matrix[v][i] != 0) && !visited[i] )
-        {
+    for(i=0; i<graph->count; i++){    
+        if( (graph->matrix[v][i] != 0) && !visited[i] ){ // 深度优先遍历 直接遍历某个节点边对应的另外一个端点        
             recursive_dfs(graph, i, visited, pFunc);
         }
     }
@@ -189,64 +184,48 @@ static void bfs(TMGraph* graph, int v, int visited[], MGraph_Printf* pFunc)
 {
     LinkQueue* queue = LinkQueue_Create();
     
-    if( queue != NULL )
-    {
-        LinkQueue_Append(queue, graph->v + v);
+    if( queue != NULL ){
+        LinkQueue_Append(queue, graph->v + v); // 直接+v 跳到v对应的地方 实际上就是 v[v][0]       
+        visited[v] = 1; 
         
-        visited[v] = 1;
-        
-        while( LinkQueue_Length(queue) > 0 )
-        {
-            int i = 0;
-            
-            v = (MVertex**)LinkQueue_Retrieve(queue) - graph->v;
-            
-            pFunc(graph->v[v]);
-            
+        while( LinkQueue_Length(queue) > 0 ){
+            int i = 0;            
+            v = (MVertex**)LinkQueue_Retrieve(queue) - graph->v; // 出队列减去 graph->v 起始地址得到偏移量            
+            pFunc(graph->v[v]);            
             printf(", ");
             
-            for(i=0; i<graph->count; i++)
-            {
-                if( (graph->matrix[v][i] != 0) && !visited[i] )
-                {
-                    LinkQueue_Append(queue, graph->v + i);
-                    
+            for(i=0; i<graph->count; i++){
+                if( (graph->matrix[v][i] != 0) && !visited[i] ){
+                    LinkQueue_Append(queue, graph->v + i); // 压人的时候 实际上是压入了定点v  这里的遍历可以理解成一颗大树                
                     visited[i] = 1;
                 }
             }
         }
-    }
-    
+    }    
     LinkQueue_Destroy(queue);
 }
 
 void MGraph_DFS(MGraph* graph, int v, MGraph_Printf* pFunc)
 {
     TMGraph* tGraph = (TMGraph*)graph;
-    int* visited = NULL;
+    int* visited = NULL; // visited[]数组记录了访问过的节点 便于回退
     int condition = (tGraph != NULL);
     
     condition = condition && (0 <= v) && (v < tGraph->count);
     condition = condition && (pFunc != NULL);
     condition = condition && ((visited = (int*)calloc(tGraph->count, sizeof(int))) != NULL);
     
-    if( condition )
-    {
-        int i = 0;
-        
-        recursive_dfs(tGraph, v, visited, pFunc);
-        
-        for(i=0; i<tGraph->count; i++)
-        {
-            if( !visited[i] )
-            {
+    if( condition ){                
+        recursive_dfs(tGraph, v, visited, pFunc);     
+
+        int i = 0;      
+        for(i=0; i<tGraph->count; i++){ // 如果有某些节点没有遍历过 继续遍历       
+            if( !visited[i] ){            
                 recursive_dfs(tGraph, i, visited, pFunc);
             }
-        }
-        
+        }        
         printf("\n");
-    }
-    
+    }    
     free(visited);
 }
 
@@ -260,23 +239,16 @@ void MGraph_BFS(MGraph* graph, int v, MGraph_Printf* pFunc)
     condition = condition && (pFunc != NULL);
     condition = condition && ((visited = (int*)calloc(tGraph->count, sizeof(int))) != NULL);
     
-    if( condition )
-    {
-        int i = 0;
-        
+    if( condition ) {    
         bfs(tGraph, v, visited, pFunc);
-        
-        for(i=0; i<tGraph->count; i++)
-        {
-            if( !visited[i] )
-            {
+        int i = 0;
+        for(i=0; i<tGraph->count; i++){        
+            if( !visited[i] ){            
                 bfs(tGraph, i, visited, pFunc);
             }
-        }
-        
+        }        
         printf("\n");
-    }
-    
+    }    
     free(visited);
 }
 
@@ -313,9 +285,7 @@ void MGraph_Display(MGraph* graph, MGraph_Printf* pFunc) // O(n*n)
                     printf(" ");
                 }
             }
-        }
-        
+        }        
         printf("\n");
     }
 }
-
