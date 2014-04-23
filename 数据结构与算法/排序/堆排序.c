@@ -12,7 +12,7 @@ void swap(int array[], int i, int j)
     array[j] = temp;
 }
 
-// 筛选算法
+// 筛选算法 自顶向下 还有一种是自底向上
 void sift(int array[], int ind, int len)
 {
     int node = ind;
