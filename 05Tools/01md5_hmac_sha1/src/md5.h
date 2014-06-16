@@ -1,6 +1,8 @@
 #ifndef _CSERVER_MD5_H_
 #define _CSERVER_MD5_H_
 
+#include <string>
+
 // MD5不可逆加密算法
 class MD5
 {
@@ -259,3 +261,19 @@ void MD5::MD5Make(unsigned char digest[16], unsigned char const *buf,
 }
 
 #endif // _CSERVER_MD5_H_
+
+#if 0 // test
+
+    MD5 md5;
+    unsigned char hash[16];
+    char ch[] = "cppcourse";
+    md5.MD5Make(hash, (unsigned char const*)ch, strlen(ch));
+    
+    for(int i = 0; i < 16; ++i){
+    	printf("%0X", hash[i]);
+    }
+    printf("\n");
+
+#endif // 0
+
+
