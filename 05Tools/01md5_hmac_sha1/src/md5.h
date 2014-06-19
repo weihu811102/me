@@ -1,4 +1,3 @@
-<<<<<<< .mine
 #ifndef MD5_H
 #define MD5_H
 
@@ -300,6 +299,3 @@ void MD5::MD5Make(unsigned char digest[16], unsigned char const *buf,
     printf("\n");
 
 #endif // 0
-
-
->>>>>>> .r38
