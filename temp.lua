@@ -1,302 +1,64 @@
-goto lable ::
+---------------------------------------------------------------------------------------------------------------
+base_type=class()       -- 定义一个基类 base_type
 
-首先,先来一段在lua创建一个类与对象的代码
+function base_type:ctor(x)  -- 定义 base_type 的构造函数
+    print("base_type ctor")
+    self.x=x
+end
 
- 
-Class = {}
-Class.__index = Class
- 
-function Class:new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
+function base_type:print_x()    -- 定义一个成员函数 base_type:print_x
+    print(self.x)
+end
+
+function base_type:hello()  -- 定义另一个成员函数 base_type:hello
+    print("hello base_type")
+end
+
+以上是基本的 class 定义的语法，完全兼容 lua 的编程习惯。我增加了一个叫做 ctor 的词，作为构造函数的名字。
+
+ test=class(basetype) -- 定义一个类 test 继承于 basetype
+
+function test:ctor()    -- 定义 test 的构造函数
+    print("test ctor")
+end
+
+function test:hello()   -- 重载 base_type:hello 为 test:hello
+    print("hello test")
 end
  
-function Class:test()
-    print(self.x,self.y)
+
+a=test.new(1)   -- 输出两行，base_type ctor 和 test ctor 。这个对象被正确的构造了。
+a:print_x() -- 输出 1 ，这个是基类 base_type 中的成员函数。
+a:hello()   -- 输出 hello test ，这个函数被重载了。
+
+Account = {balance = 0}
+function Account.withDraw(self, v)
+     self.balance = self.balance - v
 end
- 
- 
-object = Class.new(10,20)
- 
-object:test()
-猜一下会输出什么结果呢？
 
-输出：
+--------------------------------------------------------------------------------------------------------------------------------
+a = Account
+Account = nil
+a.withDraw(a, 100)
+print(a.balance)
+这样再调用，就不会出现错误了。
 
->lua -e "io.stdout:setvbuf 'no'" "object.lua" 
-20    nil
->Exit code: 0
+使用self参数是所有面向对象语言的一个核心。大多数面向对象语言都对程序员隐藏了self参数，从而使得程序员不必显示地声明这个参数。Lua也可以，当我们在定义函数时，使用了冒号，则能隐藏该参数，那么上述代码使用冒号来改下，就是下面这个样子了。
 
-我们的y值怎么没了?
-
-这个原因很简单,因为我们创建一个对象的时候使用了一个 . 号
-
-在lua程序设计第二版中,有提到当一项操作所作用的”接受者”,需要一个额外的参数来表示该接受者,这个参数通常称为self或this
-
-然后我们在这段代码加上 self
- 
-Class = {}
-Class.__index = Class
- 
-function Class:new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
+Account = {balance = 0}
+function Account:withDraw(v) -- 注意这里的冒号":"
+     self.balance = self.balance - v
 end
- 
-function Class:test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class.new(self,10,20)
- 
-object:test()
-然后我们在看一下输出
 
->lua -e "io.stdout:setvbuf 'no'" "object.lua" 
-10    20
->Exit code: 0
+a = Account
+Account = nil
+a:withDraw(100) -- 注意这里的调用时，也需要冒号":"
+print(a.balance)
+-------------------------------------------------------------------------------------------------------------------------
 
-这下就正常了!!嗯,每次创建一个对象的时候都有写一个self,会不会感觉很麻烦呢?lua提供了用冒号的方式在一个方法定义中添加一个额外的参数,以及在一个方法调用中添加一个额外的实参
-
-然后代码改成
-
-  
-Class = {}
-Class.__index = Class
- 
-function Class:new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
-end
- 
-function Class:test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class:new(10,20)
- 
-object:test()
-输出正常：
-
->lua -e "io.stdout:setvbuf 'no'" "object.lua" 
-10    20
->Exit code: 0
-
-如果，就这么完的话,本来是一件很欢乐的事情,但是,我尝试了一下以下代码
-
- 
-Class = {}
-Class.__index = Class
- 
-function Class.new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
-end
- 
-function Class:test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class.new(10,20)
- 
-object:test()
-出乎意料的是：
-
->lua -e "io.stdout:setvbuf 'no'" "object.lua" 
-10    20
->Exit code: 0
-
-代码正常运行….这个让人很费解,本来,点号对方法的操作是需要一个额外的接受者,第一段代码已经说明了这个问题,但是,现在程序有正常运行,令我真是有点费解…
-
-然后,我接着尝试又发现
- 
-Class = {}
-Class.__index = Class
- 
-function Class.new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
-end
- 
-function Class:test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class:new(10,20)
- 
-object:test()
-输出结果：
-
->lua -e "io.stdout:setvbuf 'no'" "object.lua" 
-table: 003CACA0    10
->Exit code: 0
-
-这个只不过跟第一段代码点号和冒号的位置调换了一下,就出现了这样的结果…
-
-如果,你仔细想想,这里和第一段代码的区别,可以发现,其实,这里就可以证明了冒号其实就是默认传了一个实参到方法中
-
-为了证明冒号的作用,我改动了一下代码
-
- 
-Class = {}
-Class.__index = Class
- 
-function Class:new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
-end
- 
-function Class.test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class:new(10,20)
- 
-object:test()
-输出的结果是：
-
->lua -e "io.stdout:setvbuf 'no'" "object.lua" 
-lua: object.lua:15: attempt to index global 'self' (a nil value)
-stack traceback:
-    object.lua:15: in function 'test'
-    object.lua:21: in main chunk
-    [C]: ?
->Exit code: 1
-
-从这里的错误可以看出,没有self这个参数,竟然,方法用的是点号,那我们试一下把对象传进去看下能不能正常运行
-
- 
-Class = {}
-Class.__index = Class
- 
-function Class:new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
-end
- 
-function Class.test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class:new(10,20)
- 
-object:test(object)
-遗憾的是这样的改动是错误的,错误的结果也是一样的
-
->lua -e "io.stdout:setvbuf 'no'" "object.lua" 
-lua: object.lua:15: attempt to index global 'self' (a nil value)
-stack traceback:
-    object.lua:15: in function 'test'
-    object.lua:21: in main chunk
-    [C]: ?
->Exit code: 1
-
-那我们这次尝试下想刚才那样,把方法的点号搞成一致看下效果怎样
-
- 
-Class = {}
-Class.__index = Class
- 
-function Class:new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
-end
- 
-function Class.test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class:new(10,20)
- 
-object.test()
-遗憾的是跟之前不一样，还是不能运行
-
- 
-Class = {}
-Class.__index = Class
- 
-function Class:new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
-end
- 
-function Class.test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class:new(10,20)
- 
-object.test()
-1
-  
-1
-回想一下，冒号的作用可以传递一个实参,对于方法的操作我们需要一个接受者,那么进行以下的改动
- 
-Class = {}
-Class.__index = Class
- 
-function Class:new(x,y)
-    local temp = {}
-    setmetatable(temp, Class)
-    temp.x = x
-    temp.y = y
-    return temp
-end
- 
-function Class:test()
-    print(self.x,self.y)
-end
- 
- 
-object = Class:new(10,20)
- 
-object.test(object)
-这次输出就正常了
-
->lua -e "io.stdout:setvbuf 'no'" "object.lua" 
-10    20
->Exit code: 0
-
-这段代码告诉了我们，想要操作一个方法就一定需要一个额外参数来表示该值，对于点号，我们必须显示传递一个实参，才能使程序正常运行，而为了方便，我们可以直接使用冒号来简化操作．
-
-结论:
-
-罗嗦了半天其实,可以用一下一句话来避免这个问题:
-
-用lua进行面向对象的编程,声明方法和调用方法统一用冒号,对于属性的调用全部用点号
+Lua支持goto语法, 但是有一定的局限性.
+例如
+1. 不能在block外面跳入block(因为block中的lable不可见), 
+2. 不能跳出或者跳入一个函数. 
+3. 不能跳入本地变量的作用域.
 
