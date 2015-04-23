@@ -62,3 +62,16 @@ Lua支持goto语法, 但是有一定的局限性.
 2. 不能跳出或者跳入一个函数. 
 3. 不能跳入本地变量的作用域.
 
+i = 0
+while i<10 do
+  ::redo::
+  i = i+1
+  if i%2 == 1 then 
+    goto continue 
+  else 
+    print(i)
+    goto redo
+  end
+  ::continue::
+end
+
