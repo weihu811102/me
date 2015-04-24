@@ -203,9 +203,11 @@ withClose(conn)(conn => println("do something with Connection"))
 试着将
 
 "123456"
+
 修改为
 
 123456
+
 虽然msg由String类型变为Int类型，但是由于使用了泛型，代码依旧可以正常运行。
 
 ```scala
@@ -232,7 +234,7 @@ println(msg)
 ```
 
 ## Traits ##
-Traits就像是有函数体的Interface。使用with关键字来混入。
+Traits就像是有函数体的Interface。使用**with 关键字**来混入。
 
 这个例子是给java.util.ArrayList添加了foreach的功能。
 
