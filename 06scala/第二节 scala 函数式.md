@@ -1,4 +1,4 @@
-## 模式匹配 ##
+## 2.1 模式匹配 ##
 模式匹配是类似switch-case特性，但更加灵活；也类似if-else，但更加简约。
 
 这个例子展示的使用用模式匹配实现斐波那契。 使用**case**来匹配参数，如果case _，则可以匹配任何参数。
@@ -33,7 +33,7 @@ println(fibonacci(-3))
 println(fibonacci("3"))
 ```
 
-## Case Class ##
+## 2.2 Case Class ##
 case class 顾名思义就是为case语句专门设计的类， 在普通类的基础上添加了和类名一致的工厂方法， 还添加了hashcode,equals和toString等方法。
 
 由于使用了require(n >= 0)来检验参数，如果使用负数计算，将会抛出异常。
@@ -58,7 +58,7 @@ def value(in: Expr): Int = in match {
 println(value(FibonacciExpr(3)))
 ```
 
-## 函数式的威力 ##
+## 2.3 函数式的威力 ##
 这个例子是用指令式编程判断一个List中是否含有奇数。
 
 试着将
@@ -100,7 +100,7 @@ val list = List(1, 2, 3, 4)
 
 println("list contains Odd ? " + list.exists(_ % 2 == 1))
 ```
-## 函数式真正的威力 ##
+## 2.4 函数式真正的威力 ##
 函数式除了能简化代码外，更重要的是他关注的是Input和Output，函数本身没有副作用。
 
 就是Unix pipeline一样，简单的命令组合在一起威力无穷。
@@ -122,7 +122,7 @@ println("cat file | grep 'warn' | grep '2013' | wc : "
 cat file | grep 'warn' | grep '2013' | wc : 2
 ```
 
-## Word Count ##
+## 2.5 Word Count ##
 Word Count是一个MapReduce的一个经典示例。在函数式编程中，Word Count最直观的实现方法也是MapReduce。
 
 这个例子介绍了List的两个重要的高阶方法map和reduceLeft。
@@ -146,7 +146,7 @@ println("wordcount:" + num)
 wordcount:4
 ```
 
-## 尾递归 ##
+## 2.6 尾递归 ##
 尾递归是递归的一种，特点在于会在函数的最末调用自身。尾递归是函数式编程的常见写法。
 
 这个例子是foldLeft的尾递归实现。foldLeft和reduceLeft相比更常用，多一个初始参数。
@@ -175,7 +175,7 @@ println("wordcount:" + num)
 wordcount:4
 ```
 
-## 更强大的For循环 ##
+## 2.7 更强大的For循环 ##
 循环语句是指令式编程的常见语句，Scala对其加以改进，成为适应函数式风格的利器。
 
 For循环也是有返回值的，返回的是一个List。在每一轮迭代中加入yield，yield后的值可以加入到List中。
@@ -199,7 +199,7 @@ println("wordcount:" + num)
 // wordcount:4
 ```
 
-## Option ##
+## 2.8 Option ##
 Scala提供了Option机制来解决，代码中不断检查null的问题。
 
 这个例子包装了getProperty方法，使其返回一个Option。 这样就可以不再漫无目的地null检查。只要Option类型的值即可。
@@ -231,7 +231,7 @@ osName.foreach(print _)
 // Linux
 ```
 
-## Lazy初始化 ##
+## 2.9 Lazy初始化 ##
 Lazy可以延迟初始化字段。加上lazy的字段会在第一次访问的时候初始化，而不是类初始化的时候初始化。
 
 这个例子是从github获得Scala的版本号，由于访问网络需要较多时间。可以使用lazy来延迟获取。 防止可能的浪费。

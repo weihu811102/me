@@ -1,6 +1,6 @@
 [来自](http://zh.scala-tour.com/#/expression-and-values)
 
-##  表达式和值  ##
+##  1.1 表达式和值  ##
 
 在Scala中，几乎所有的语言元素都是表达式。
 
@@ -16,7 +16,7 @@ println(helloWorld)
 ```
 可以通过val定义一个常量，亦可以通过var定义一个变量。推荐多使用常量。
 
-##  函数是一等公民  ##
+##  1.2 函数是一等公民  ##
 
 可以使用def来定义一个函数。函数体是一个表达式。
 
@@ -41,7 +41,7 @@ println("squareVal(2):" + squareVal(2))
 println("addOne(squareVal,2):" + addOne(squareVal, 2))
 ```
 
-##  借贷模式  ##
+##  1.3 借贷模式  ##
 
 由于函数可以像值一样作为参数传递，所以可以方便的实现借贷模式。
 
@@ -68,7 +68,7 @@ withScanner(File("/proc/self/stat"),
     scanner => println("pid is " + scanner.next()))
 ```
 
-## 按名称传递参数 ##
+## 1.4 按名称传递参数 ##
 这个例子演示了按名称传递参数，由于有除以0，所以运行该程序会产生异常。
 ```scala
 试着将
@@ -95,7 +95,7 @@ val MSG = "programing is running"
 log(MSG + 1 / 0)
 ```
 
-## 定义类 ##
+## 1.5 定义类 ##
 可以用class关键字来定义类。并通过new来创建类。
 
 在定义类时可以定义字段，如firstName，lastName。这样做还可以**自动生成构造函数**。
@@ -134,7 +134,7 @@ obama.age_=(51)
 println("age: " + obama.age)
 ```
 
-## 鸭子类型 ##
+## 1.6 鸭子类型 ##
 走起来像鸭子，叫起来像鸭子，就是鸭子。
 
 这个例子中使用
@@ -163,7 +163,7 @@ withClose(conn, conn =>
     println("do something with Connection"))
 ```
 
-## 柯里化 ##
+## 1.7 柯里化 ##
 这个例子和上面的功能相同。不同的是使用了柯里化(Currying)技术。
 ```scala
 def add(x:Int, y:Int) = x + y
@@ -197,7 +197,7 @@ class Connection {
 val conn: Connection = new Connection()
 withClose(conn)(conn => println("do something with Connection"))
 ```
-## 范型 ##
+## 1.8 范型 ##
 之前的例子可以使用泛型变得更简洁更灵活。
 
 试着将
@@ -233,7 +233,7 @@ val msg = withClose(conn) { conn =>
 println(msg)
 ```
 
-## Traits ##
+## 1.9 Traits ##
 Traits就像是有函数体的Interface。使用**with 关键字**来混入。
 
 这个例子是给java.util.ArrayList添加了foreach的功能。
