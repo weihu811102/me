@@ -165,7 +165,7 @@ withClose(conn, conn =>
 
 ## 柯里化 ##
 这个例子和上面的功能相同。不同的是使用了柯里化(Currying)技术。
-
+```scala
 def add(x:Int, y:Int) = x + y
 是普通的函数
 
@@ -174,7 +174,7 @@ def add(x:Int) = (y:Int) => x + y
 
  def add(x:Int)(y:Int) = x + y
 是简化写法
-
+```
 柯里化可以让我们构造出更像原生语言提供的功能的代码
 
 试着将例子中的withclose(...)(...)换成withclose(...){...}
