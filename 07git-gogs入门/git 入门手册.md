@@ -245,13 +245,7 @@ fork一份到本地
 
 拉取远程信息：
 	git fetch origin
-
-
-切换到项目leader用户合并pr：
-
-	git request-pull origin/master iss53
-
-
+  
 
 
 
