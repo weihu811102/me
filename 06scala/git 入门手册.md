@@ -1,3 +1,4 @@
+本教程内容主要来自：[《Pro Git》](http://git-scm.com/book/zh/v1)
 ## 1.关于版本控制 ##
 
 **1.1 本地版本控制系统**
@@ -5,16 +6,22 @@
 许多人习惯用复制整个项目目录的方式来保存不同的版本，或许还会改名加上备份时间以示区别。这么做唯一的好处就是简单。不过坏处也不少：有时候会混淆所在的工作目录，一旦弄错文件丢了数据就没法撤销恢复。
 
 为了解决这个问题，人们很久以前就开发了许多种本地版本控制系统，大多都是采用某种简单的数据库来记录文件的历次更新差异（见图 1-1）。
+ 
+![](https://raw.githubusercontent.com/peimin/me/master/07git-gogs入门/1.1.png)
 
 **1.2 集中化的版本控制系统**
 
 接下来人们又遇到一个问题，如何让在不同系统上的开发者协同工作？于是，集中化的版本控制系统（ Centralized Version Control Systems，简称 CVCS ）应运而生。这类系统，诸如 CVS，Subversion 以及 Perforce 等，都有一个单一的集中管理的服务器，保存所有文件的修订版本，而协同工作的人们都通过客户端连到这台服务器，取出最新的文件或者提交更新。多年以来，这已成为版本控制系统的标准做法（见图 1-2）。
+
+![](https://raw.githubusercontent.com/peimin/me/master/07git-gogs入门/1.2.png)
 
 事分两面，有好有坏。这么做最显而易见的缺点是中央服务器的单点故障。如果宕机一小时，那么在这一小时内，谁都无法提交更新，也就无法协同工作。要是中央服务器的磁盘发生故障，碰巧没做备份，或者备份不够及时，就会有丢失数据的风险。最坏的情况是彻底丢失整个项目的所有历史更改记录，而被客户端偶然提取出来的保存在本地的某些快照数据就成了恢复数据的希望。但这样的话依然是个问题，你不能保证所有的数据都已经有人事先完整提取出来过。本地版本控制系统也存在类似问题，只要整个项目的历史记录被保存在单一位置，就有丢失所有历史更新记录的风险。
 
 **1.3 分布式版本控制系统**
 
 于是分布式版本控制系统（ Distributed Version Control System，简称 DVCS ）面世了。在这类系统中，像 Git，Mercurial，Bazaar 以及 Darcs 等，客户端并不只提取最新版本的文件快照，而是把代码仓库完整地镜像下来。这么一来，任何一处协同工作用的服务器发生故障，事后都可以用任何一个镜像出来的本地仓库恢复。因为每一次的提取操作，实际上都是一次对代码仓库的完整备份（见图 1-3）。
+
+![](https://raw.githubusercontent.com/peimin/me/master/07git-gogs入门/1.3.png)
 
 更进一步，许多这类系统都可以指定和若干不同的远端代码仓库进行交互。籍此，你就可以在同一个项目中，分别和不同工作小组的人相互协作。你可以根据需要设定不同的协作流程，比如层次模型式的工作流，而这在以前的集中式系统中是无法实现的。
 
@@ -54,7 +61,8 @@ Git 并不保存这些前后变化的差异数据。实际上，Git 更像是把
 
 Git 使用 SHA-1 算法计算数据的校验和，通过对文件的内容或目录的结构计算出一个 SHA-1 哈希值，作为指纹字符串。该字串由 40 个十六进制字符（0-9 及 a-f）组成，看起来就像是：
 
-24b9da6552252987aa493b52f8696cd6d3b00373
+	24b9da6552252987aa493b52f8696cd6d3b00373
+
 Git 的工作完全依赖于这类指纹字串，所以你会经常看到这样的哈希值。实际上，所有保存在 Git 数据库中的东西都是用此哈希值来作索引的，而不是靠文件名。
 
 **2.2.4 多数操作仅添加数据**
@@ -92,32 +100,41 @@ Git 的工作完全依赖于这类指纹字串，所以你会经常看到这样�
 
 另外 windows 下也有个tortoisegit工具方便我们使用git。
 
-## 3.git 设置 ##
+## 3.git 服务器安装 ##
 
-**3.1 设置用户信息**
+目前团队中比较广泛使用的是一些带有web功能的git服务器，它们除了代码审核提交之外还有issue等功能，更加方便的对项目进行管理和维护。其中Github最为出名，目前是全球最大代码托管网站。与Github类似的开源项目有gitlib gogs等。
 
-第一个要配置的是你个人的用户名称和电子邮件地址。这两条配置很重要，每次 Git 提交时都会引用这两条信息，说明是谁提交了更新，所以会随更新内容一起被永久纳入历史记录：
+**ubuntu 服务器(x64)上 gogs 的安装**
 
-	git config   user.name peimin
-	git config - user.email peimin@outlook.com
+[gogs官网](http://gogs.io)给出了二进制和源码安装的详细过程，推荐使用二进制包来安装。
 
-**3.2 查看配置信息**
+	$ sudo adduser git
+	$ sudo apt-get install git
+	$ sudo apt-get install mysql-server
 
-	git config --list
+在mysql中创建一个gogs用的数据库
 
-输出结果：
+	$ mysql -u root -p
+	$ mysql> CREATE DATABASE gogs CHARACTER SET utf8 COLLATE utf8_bin;
+	$ mysql> GRANT ALL PRIVILEGES ON gogs.* TO ‘root’@‘localhost’ IDENTIFIED BY ‘password’;
+	$ mysql> FLUSH PRIVILEGES;
+	$ mysql> QUIT
 
-## 4.git 服务器安装 ##
+获取gogs二进制安装包并且启动gogs服务器
 
+	1.从[gogs Github仓库](https://github.com/gogits/gogs/releases)上获取二进制安装包。
+	2.将或者到的gogs二进制安装包上传到服务器上。
+	3.$ unzip linux_amd64.zip
+	4.$ ./gogs web
+	5.在浏览器中输入服务器 ip:port(默认3000) 访问并且对gogs服务器进行初始化设置。
 
+## 4.git 使用 ##
 
-## 5.git 使用 ##
-
-**5.1 取得项目的 Git 仓库**
+**4.1 取得项目的 Git 仓库**
 
 有两种取得 Git 项目仓库的方法。第一种是在现存的目录下，通过导入所有文件来创建新的 Git 仓库。第二种是从已有的 Git 仓库克隆出一个新的镜像仓库来。
 
-**5.1.1 在工作目录中初始化新仓库**
+**4.1.1 在工作目录中初始化新仓库**
 
 要对现有的某个项目开始用 Git 管理，只需到此项目所在的目录，执行：
 
@@ -131,7 +148,7 @@ Git 的工作完全依赖于这类指纹字串，所以你会经常看到这样�
 	git add README
 	git commit -m 'initial project version'
 
-**5.1.2 从现有仓库克隆**
+**4.1.2 从现有仓库克隆**
 
 先把该项目的 Git 仓库复制一份出来，这就需要用到 git clone 命令。如果你熟悉其他的 VCS 比如 Subversion，你可能已经注意到这里使用的是 clone 而不是 checkout。
 
@@ -139,13 +156,14 @@ Git 的工作完全依赖于这类指纹字串，所以你会经常看到这样�
 
 Git 支持许多数据传输协议。之前的例子使用的是 git:// 协议，不过你也可以用 http(s):// 或者 user@server:/path.git 表示的 SSH 传输协议。
 
-**5.2 忽略某些文件**
+**4.2 忽略某些文件**
 
 一般我们总会有些文件无需纳入 Git 的管理，也不希望它们总出现在未跟踪文件列表。通常都是些自动生成的文件，比如日志文件，或者编译过程中创建的临时文件等。我们可以创建一个名为 .gitignore 的文件，列出要忽略的文件模式。来看一个实际的例子：
 
-$ cat .gitignore
-*.[oa]
-*~
+	$ cat .gitignore
+	*.[oa]
+	*~
+
 第一行告诉 Git 忽略所有以 .o 或 .a 结尾的文件。一般这类对象文件和存档文件都是编译过程中出现的，我们用不着跟踪它们的版本。第二行告诉 Git 忽略所有以波浪符（~）结尾的文件，许多文本编辑软件（比如 Emacs）都用这样的文件名保存副本。此外，你可能还需要忽略 log，tmp 或者 pid 目录，以及自动生成的文档等等。要养成一开始就设置好 .gitignore 文件的习惯，以免将来误提交这类无用的文件。
 
 文件 .gitignore 的格式规范如下：
@@ -154,6 +172,97 @@ $ cat .gitignore
 - 可以使用标准的 glob 模式匹配。
 - 匹配模式最后跟反斜杠（/）说明要忽略的是目录。
 - 要忽略指定模式以外的文件或目录，可以在模式前加上惊叹号（!）取反。 
+
+## 5.使用 gogs 仓库 ##
+
+**5.1 简单的使用**
+
+fork一份到本地
+
+	$ git clone http://git.yzhan.com/peimin/test.git
+
+查看提交日志等
+
+	$ git log
+	$ git status
+
+简单的提交文件到本地仓库：
+
+	vi hello.lua
+	git add hello.lua
+	git commit -m "hello"
+	git pull
+	git push
+
+**5.2 远程仓库的使用**
+
+要查看当前配置有哪些远程仓库，可以用 git remote 命令，它会列出每个远程库的简短名字。在克隆完某个项目后，至少可以看到一个名为 origin 的远程库，Git 默认使用这个名字来标识你所克隆的原始仓库。
+
+	$ git remote -v
+
+	git remote add pbc  http://git.yzhan.com/peimin/test.git
+	
+	git fetch pbc
+
+	git push origin master
+
+	git remote show origin
+
+
+**5.3 分支**
+
+分支的新建与切换
+
+	$ git branch iss53
+	$ git checkout iss53
+	$ vi index.html
+	$ git add index.html
+	$ git commit -m "add a new file"
+
+分支的合并
+
+在问题 #53 相关的工作完成之后，可以合并回 master 分支。只需回到 master 分支，运行 git merge 命令指定要合并进来的分支：
+
+	git checkout master
+	git merge iss53
+	git branch -v
+
+注意看 master 分支前的 * 字符：它表示当前所在的分支。
+
+推送本地分支
+
+将我们本地的iss53分支推送到远程 
+
+	git push (远程仓库名) (分支名)
+
+	git branch
+	
+	git remote
+	
+	git push origin iss53
+
+	git push (默认为 origin/master master)
+
+拉取远程信息：
+	git fetch origin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
